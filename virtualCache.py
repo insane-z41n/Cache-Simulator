@@ -17,11 +17,18 @@ print("ways:" , ways)
 ## Calc Sets 
 def calcSets(cacheSize, ways, cacheLineSize):
     
-    sets = (cacheSize)/(cacheLineSize*ways)
+    sets = float((cacheSize)/(cacheLineSize*ways))
+    print("cacheSize ------> ", cacheSize)
+    print("cacheLineSize------> ", cacheLineSize)
+    print("ways------> ", ways)
+
+    print("cacheLineSize * ways------> ", cacheLineSize*ways)
+    print("SETS ------> ", sets)
+
     return sets
 
 ##Global LRU Queue:
-q = [];
+q = []
 
 ##TODO for debug
 def revListPrint(queue):
@@ -109,13 +116,13 @@ for ins in instructions:
         pc_add, read_write, mem_add = parse_instruction(ins)
         tag, setIndex, offset = parseMemAdd(mem_add,1,6)
 
-        print("OFFSET: ", offset)
-        print("SET INDEX: ", setIndex)
-        print("TAG: ", tag)
+        # print("OFFSET: ", offset)
+        # print("SET INDEX: ", setIndex)
+        # print("TAG: ", tag)
+        setnum = calcSets(int(cacheSize), int(ways), 2**6)
 
-        print("SETS: ", calcSets(cacheSize, ways, 2**6))
-
-    except: 
+    except Exception as e:
+        print("ERROR -> ", e) 
         error_lines.append(count)
     count+=1
     # Get instruction infromation
