@@ -30,6 +30,30 @@ def LruPolicy(data):
     q.append(data)
     return data
 
+### DECONSTRUCT MEMORY ADDRESS TO TAG, SET INDEX, OFFSET BINARY REPRESENTATIONS
+def parseMemAdd(memAdd, setindexbits, offsetbits):
+    scale = 16
+    
+    print ("memAdd in hex", memAdd)
+    memAdd.split()
+    bits = 4*(len(memAdd[2:]))
+    # hex to binary
+    res = str(bin(int(memAdd, scale))[2:].zfill(bits))
+
+    ## Start index of all binary splits 
+    offsetStart = bits-offsetbits
+    setIndexStart = bits-(offsetbits+setindexbits)
+
+    ## Generate each binary split based on required bits
+    offset = res[offsetStart:]
+    setIndex = res[setIndexStart:offsetStart]
+    tag= res[:setIndexStart ]
+
+    return tag, setIndex, offset
+
+
+
+
 ### HELPER FUNCTION --------------------------
 
 # Read instruction line and return information needed
