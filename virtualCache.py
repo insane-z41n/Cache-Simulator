@@ -1,6 +1,25 @@
 import sys
 from collections import deque
 
+## Terminal Properties
+termArgs = sys.argv;
+print(termArgs);
+
+pyScript = termArgs[0]
+filepath = termArgs[1]
+cacheSize = termArgs[2]
+ways = termArgs[3]
+
+print("size: ", cacheSize)
+print("ways:" , ways)
+
+
+## Calc Sets 
+def calcSets(cacheSize, ways, cacheLineSize):
+    
+    sets = (cacheSize)/(cacheLineSize*ways)
+    return sets
+
 ##Global LRU Queue:
 q = [];
 
@@ -74,7 +93,7 @@ def read_argument(arg):
         print("Please input the file")
         exit
 
-    f = open(arg[1], "r")
+    f = open(filepath, "r")
     return arg[1], f.readlines()
 
 ### CREATE CACHE -----------------------------
@@ -88,6 +107,14 @@ for ins in instructions:
 
     try :
         pc_add, read_write, mem_add = parse_instruction(ins)
+        tag, setIndex, offset = parseMemAdd(mem_add,1,6)
+
+        print("OFFSET: ", offset)
+        print("SET INDEX: ", setIndex)
+        print("TAG: ", tag)
+
+        print("SETS: ", calcSets(cacheSize, ways, 2**6))
+
     except: 
         error_lines.append(count)
     count+=1

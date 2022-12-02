@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python virtualCache.py $1
+python virtualCache.py $1 $2 $3
