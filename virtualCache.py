@@ -1,4 +1,34 @@
 import sys
+from collections import deque
+
+##Global LRU Queue:
+q = [];
+
+##TODO for debug
+def revListPrint(queue):
+    for i,e in reversed(list(enumerate(q))):
+        print(i,e)
+
+
+### LRU QUEUE -------------------------------------
+def LruPolicy(data):
+    # q = queue[-1: 0]
+    # print("q: ", q)
+    for i,e in reversed(list(enumerate(q))):
+        if(i == 0): #Reached last used element
+            # print("last")
+            q.pop(i)
+            q.append(data)
+            return e
+        elif(e == data): #Found Match in Queue, so pop that element and shift other rows, add data to end of queue
+            # print("match")
+            q.pop(i)
+            q.append(data)
+            return data
+
+    #Queue is empty, so simply add your data
+    q.append(data)
+    return data
 
 ### HELPER FUNCTION --------------------------
 
@@ -45,3 +75,4 @@ if len(error_lines) > 0:
 else:
     # TODO: DEBUG ONLY
     print("File Read")
+
