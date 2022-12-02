@@ -1,4 +1,5 @@
 import sys
+from Cache import Cache
 from collections import deque
 
 ## Terminal Properties
@@ -104,6 +105,9 @@ def read_argument(arg):
     return arg[1], f.readlines()
 
 ### CREATE CACHE -----------------------------
+
+cache = Cache(4, 4)
+print(cache)
 
 # Get all instructions from file
 file_name, instructions = read_argument(sys.argv)

@@ -1,3 +1,4 @@
 .git
 .DS_Store
 traceFiles/
+__pycache__/
