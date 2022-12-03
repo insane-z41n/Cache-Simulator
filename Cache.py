@@ -69,10 +69,9 @@ class Cache:
 
 
 def create_cache(num_sets, slots):
-    q = []
     cache = {}
     for i in range(num_sets):
-        cache[i] = (CacheInfo.initialize_cache_info_for_set(slots), q)
+        cache[i] = (CacheInfo.initialize_cache_info_for_set(slots))
     
     return cache
 
