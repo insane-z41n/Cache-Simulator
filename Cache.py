@@ -10,24 +10,25 @@ def revListPrint(queue):
 
 
 ### LRU QUEUE -------------------------------------
-def LruPolicy(data):
+def LruPolicy(data, q):
     # q = queue[-1: 0]
     # print("q: ", q)
+    evicted = data
     for i,e in reversed(list(enumerate(q))):
         if(i == 0): #Reached last used element
             # print("last")
-            q.pop(i)
+            evicted = q.pop(i)
             q.append(data)
             return e
         elif(e == data): #Found Match in Queue, so pop that element and shift other rows, add data to end of queue
             # print("match")
-            q.pop(i)
+            evicted = q.pop(i)
             q.append(data)
             return data
 
     #Queue is empty, so simply add your data
     q.append(data)
-    return data
+    return evicted;
 
 
 class Cache:
@@ -45,7 +46,7 @@ class Cache:
         return msg
 
     def add_to_cache(self, setIndex, tag, data):
-        print(self.cache)
+
         frames = self.cache[setIndex]
         for f in frames:
             if f.tag == "":
@@ -53,11 +54,9 @@ class Cache:
                 f.data = data
                 f.val = 1
                 LruPolicy(f.tag)
-                self.cache[setIndex] = frames
                 return "miss"
-            elif tag == f.tag:
+            elif f.tag == tag:
                 LruPolicy(f.tag)
-                self.cache[setIndex] = frames
                 return "hit"
         
         evicted = LruPolicy(tag)
@@ -66,14 +65,14 @@ class Cache:
                 f.tag = tag
                 f.data = data
                 f.val = 1
-                self.cache[setIndex] = frames
                 return "miss"
 
 
 def create_cache(num_sets, slots):
+    q = []
     cache = {}
     for i in range(num_sets):
-        cache[i] = CacheInfo.initialize_cache_info_for_set(slots)
+        cache[i] = (CacheInfo.initialize_cache_info_for_set(slots), q)
     
     return cache
 

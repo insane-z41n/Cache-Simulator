@@ -1,4 +1,5 @@
 import sys
+import math
 from Cache import Cache
 from collections import deque
 
@@ -36,7 +37,10 @@ def parseMemAdd(memAdd, setindexbits, offsetbits):
     ## Generate each binary split based on required bits
     offset = res[offsetStart:]
     setIndex = res[setIndexStart:offsetStart]
-    tag= res[:setIndexStart ]
+    if(setindexbits == 0):
+        setIndex = None
+
+    tag= res[:setIndexStart]
 
     return tag, setIndex, offset
 
@@ -73,6 +77,8 @@ def binaryToDecimal(binary):
         i += 1
     return decimal
 
+
+
 ### CREATE CACHE -----------------------------
 
 ## Terminal Properties
@@ -88,34 +94,59 @@ ways = 16 if (len(sys.argv) < 4) else int(termArgs[3])
 # print("ways:" , ways)
 
 setnum = calcSets(int(cacheSize), int(ways), 2**6)
+t_bits = int(math.log2(setnum))
 cache = Cache(int(setnum), ways)
-print(cache)
+# print("BEFORE:\n", cache)
 
 # Get all instructions from file
 instructions = read_file(filepath)
-count = 1 
+count = 1
+miss_count = 0
+hit_count = 0
+
 error_lines = []
 # Loop through each instruction  
-for ins in instructions:
+f = open(filepath, 'r')
+offset_change = ""
+changes = []
+while True:
+    ins = f.readline()
+    if not ins or ins == '#eof':
+        break
 
     try :
         pc_add, read_write, mem_add = parse_instruction(ins)
-        tag, setIndex, offset = parseMemAdd(mem_add,1,6)
+        tag, setIndex, offset = parseMemAdd(mem_add,t_bits,6)
+        if offset_change != "" and offset != offset:
+            
+            changes.append("OFFSET CHANGED:", offset)
 
-        cache.add_to_cache(binaryToDecimal(int(setIndex)), tag, pc_add)
+        if(setIndex == None):
+            setIndex = "0"
+
+        result = cache.add_to_cache(binaryToDecimal(int(setIndex)), binaryToDecimal(int(tag)), pc_add)
+        if result == 'miss':
+            miss_count+=1
+        else:
+            hit_count+=1
 
     except Exception as e:
-        print("ERROR -> ", e) 
-        error_lines.append(count)
+        error_lines.append("Input File Line: {} ERROR -> {}".format(count, e))
     count+=1
     # Get instruction infromation
 
-#print(cache)
-
+print("CACHE:\n", cache)
+print("T BITTIES: ", t_bits)
+print("TOTAL MISSES: ", miss_count)
+print("TOTAL HITS", hit_count)
+print("Cache miss rate: {}% ".format(miss_count/(miss_count+hit_count) * 100))
+if len(changes) > 0:
+    print("CHANGE: " + changes)
 if len(error_lines) > 0:
     # TODO: DEBUG ONLY
-    print("\nFile lines {} incurred an error when reading file {}".format(error_lines, filepath))
+    for error in error_lines:
+        print(error)
 else:
     # TODO: DEBUG ONLY
-    print("File Read")
+    print("File Read Successfully")
 

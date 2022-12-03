@@ -1,0 +1,6 @@
+./run_sim.sh traceFiles/ls.trace.txt 32768 16
+./run_sim.sh traceFiles/gcc.trace.txt 32768 16
+./run_sim.sh traceFiles/naive_dgemm.trace.txt 262144 16
+./run_sim.sh traceFiles/naive_dgemm_full.trace.txt 262144 16
+./run_sim.sh traceFiles/openblas_dgemm.trace.txt 262144 16
+./run_sim.sh traceFiles/openblas_dgemm_full.trace.txt  262144 16
