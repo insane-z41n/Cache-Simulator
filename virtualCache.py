@@ -2,66 +2,28 @@ import sys
 from Cache import Cache
 from collections import deque
 
-## Terminal Properties
-termArgs = sys.argv;
-print(termArgs);
 
-pyScript = termArgs[0]
-filepath = termArgs[1]
-cacheSize = termArgs[2]
-ways = termArgs[3]
-
-print("size: ", cacheSize)
-print("ways:" , ways)
 
 
 ## Calc Sets 
 def calcSets(cacheSize, ways, cacheLineSize):
     
     sets = float((cacheSize)/(cacheLineSize*ways))
-    print("cacheSize ------> ", cacheSize)
-    print("cacheLineSize------> ", cacheLineSize)
-    print("ways------> ", ways)
+    # print("cacheSize ------> ", cacheSize)
+    # print("cacheLineSize------> ", cacheLineSize)
+    # print("ways------> ", ways)
 
-    print("cacheLineSize * ways------> ", cacheLineSize*ways)
-    print("SETS ------> ", sets)
+    # print("cacheLineSize * ways------> ", cacheLineSize*ways)
+    # print("SETS ------> ", sets)
 
     return sets
 
-##Global LRU Queue:
-q = []
-
-##TODO for debug
-def revListPrint(queue):
-    for i,e in reversed(list(enumerate(q))):
-        print(i,e)
-
-
-### LRU QUEUE -------------------------------------
-def LruPolicy(data):
-    # q = queue[-1: 0]
-    # print("q: ", q)
-    for i,e in reversed(list(enumerate(q))):
-        if(i == 0): #Reached last used element
-            # print("last")
-            q.pop(i)
-            q.append(data)
-            return e
-        elif(e == data): #Found Match in Queue, so pop that element and shift other rows, add data to end of queue
-            # print("match")
-            q.pop(i)
-            q.append(data)
-            return data
-
-    #Queue is empty, so simply add your data
-    q.append(data)
-    return data
 
 ### DECONSTRUCT MEMORY ADDRESS TO TAG, SET INDEX, OFFSET BINARY REPRESENTATIONS
 def parseMemAdd(memAdd, setindexbits, offsetbits):
     scale = 16
     
-    print ("memAdd in hex", memAdd)
+    # print ("memAdd in hex", memAdd)
     memAdd.split()
     bits = 4*(len(memAdd[2:]))
     # hex to binary
@@ -88,7 +50,7 @@ def parseMemAdd(memAdd, setindexbits, offsetbits):
 # - R/W Character
 # - Memory Address
 def parse_instruction(instruction):
-    trace = ins.strip().split(' ')
+    trace = instruction.strip().split(' ')
     pc_add = trace[0]
     read_write = trace[1]
     mem_add = trace[2]
@@ -96,21 +58,41 @@ def parse_instruction(instruction):
 
 # Return list of line from file given in arguments
 # - List of lines from file
-def read_argument(arg):
-    if len(arg) < 2:
-        print("Please input the file")
-        exit
-
+def read_file(filepath):
     f = open(filepath, "r")
-    return arg[1], f.readlines()
+    return f.readlines()
+
+# Return Decimal from binary
+# - Decimal value
+def binaryToDecimal(binary):
+    decimal, i = 0, 0
+    while(binary != 0):
+        dec = binary % 10
+        decimal = decimal + dec * pow(2, i)
+        binary = binary//10
+        i += 1
+    return decimal
 
 ### CREATE CACHE -----------------------------
 
-cache = Cache(4, 4)
+## Terminal Properties
+termArgs = sys.argv;
+# print(termArgs);
+
+pyScript = termArgs[0]
+filepath = termArgs[1]
+cacheSize = 1024 if (len(sys.argv) < 3) else termArgs[2]
+ways = 16 if (len(sys.argv) < 4) else int(termArgs[3])
+
+# print("size: ", cacheSize)
+# print("ways:" , ways)
+
+setnum = calcSets(int(cacheSize), int(ways), 2**6)
+cache = Cache(int(setnum), ways)
 print(cache)
 
 # Get all instructions from file
-file_name, instructions = read_argument(sys.argv)
+instructions = read_file(filepath)
 count = 1 
 error_lines = []
 # Loop through each instruction  
@@ -120,10 +102,7 @@ for ins in instructions:
         pc_add, read_write, mem_add = parse_instruction(ins)
         tag, setIndex, offset = parseMemAdd(mem_add,1,6)
 
-        # print("OFFSET: ", offset)
-        # print("SET INDEX: ", setIndex)
-        # print("TAG: ", tag)
-        setnum = calcSets(int(cacheSize), int(ways), 2**6)
+        cache.add_to_cache(binaryToDecimal(int(setIndex)), tag, pc_add)
 
     except Exception as e:
         print("ERROR -> ", e) 
@@ -131,9 +110,11 @@ for ins in instructions:
     count+=1
     # Get instruction infromation
 
+#print(cache)
+
 if len(error_lines) > 0:
     # TODO: DEBUG ONLY
-    print("\nFile lines {} incurred an error when reading file {}".format(error_lines, file_name))
+    print("\nFile lines {} incurred an error when reading file {}".format(error_lines, filepath))
 else:
     # TODO: DEBUG ONLY
     print("File Read")

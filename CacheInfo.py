@@ -8,6 +8,7 @@ class CacheInfo:
     def initialize_cache_info_for_set(slots):
         s = []
         for i in range(slots):
+            #                way|tag|val|data
             s.append(CacheInfo(i, "", 0, ""))
         return s
 
