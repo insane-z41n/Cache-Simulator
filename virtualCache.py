@@ -106,9 +106,9 @@ hit_count = 0
 
 error_lines = []
 # Loop through each instruction  
+print(filepath)
 f = open(filepath, 'r')
-offset_change = ""
-changes = []
+
 while True:
     ins = f.readline()
     if not ins or ins == '#eof':
@@ -117,15 +117,15 @@ while True:
     try :
         pc_add, read_write, mem_add = parse_instruction(ins)
         tag, setIndex, offset = parseMemAdd(mem_add,t_bits,6)
-        if offset_change != "" and offset != offset:
-            
-            changes.append("OFFSET CHANGED:", offset)
 
         if(setIndex == None):
             setIndex = "0"
 
+        print("Before Cache")
         result = cache.add_to_cache(binaryToDecimal(int(setIndex)), binaryToDecimal(int(tag)), pc_add)
+        print("HERE")
         if result == 'miss':
+            print("MISS")
             miss_count+=1
         else:
             hit_count+=1
@@ -140,8 +140,7 @@ print("T BITTIES: ", t_bits)
 print("TOTAL MISSES: ", miss_count)
 print("TOTAL HITS", hit_count)
 print("Cache miss rate: {}% ".format(miss_count/(miss_count+hit_count) * 100))
-if len(changes) > 0:
-    print("CHANGE: " + changes)
+
 if len(error_lines) > 0:
     # TODO: DEBUG ONLY
     for error in error_lines:

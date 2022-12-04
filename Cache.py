@@ -10,7 +10,7 @@ def revListPrint(queue):
 
 
 ### LRU QUEUE -------------------------------------
-def LruPolicy(data, q):
+def LruPolicy(data):
     # q = queue[-1: 0]
     # print("q: ", q)
     evicted = data
@@ -28,7 +28,7 @@ def LruPolicy(data, q):
 
     #Queue is empty, so simply add your data
     q.append(data)
-    return evicted;
+    return evicted
 
 
 class Cache:
@@ -54,9 +54,11 @@ class Cache:
                 f.data = data
                 f.val = 1
                 LruPolicy(f.tag)
+                self.cache[setIndex] = frames
                 return "miss"
             elif f.tag == tag:
                 LruPolicy(f.tag)
+                self.cache[setIndex] = frames
                 return "hit"
         
         evicted = LruPolicy(tag)
@@ -65,6 +67,7 @@ class Cache:
                 f.tag = tag
                 f.data = data
                 f.val = 1
+                self.cache[setIndex] = frames
                 return "miss"
 
 
