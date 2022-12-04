@@ -120,12 +120,9 @@ while True:
 
         if(setIndex == None):
             setIndex = "0"
-
-        print("Before Cache")
+            
         result = cache.add_to_cache(binaryToDecimal(int(setIndex)), binaryToDecimal(int(tag)), pc_add)
-        print("HERE")
         if result == 'miss':
-            print("MISS")
             miss_count+=1
         else:
             hit_count+=1
